@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khyxx Digitals | Orders</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="admin-page">
+    <h1>Orders</h1>
+    <form id="admin-login" class="admin-login">
+      <label>Admin key <input required type="password" name="key" autocomplete="current-password" /></label>
+      <button class="button button-dark">View orders</button>
+    </form>
+    <p id="admin-status" role="status"></p>
+    <div id="orders" class="orders-table"></div>
+  </main>
+  <script>
+    const form = document.querySelector('#admin-login');
+    const status = document.querySelector('#admin-status');
+    const orders = document.querySelector('#orders');
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const key = new FormData(form).get('key');
+      const response = await fetch('/api/admin/orders', { headers: { 'x-admin-key': key } });
+      if (!response.ok) { status.textContent = 'Unable to load orders.'; return; }
+      const data = await response.json();
+      status.textContent = `${data.length} order${data.length === 1 ? '' : 's'} found.`;
+      orders.innerHTML = data.map(order => `<article><strong>${order.id}</strong><p>${order.buyer.name} &lt;${order.buyer.email}&gt;</p><p>${order.items.map(item => `${item.name} x${item.quantity}`).join(', ')}</p><p>PHP ${order.total.toLocaleString()} | ${order.paymentMethod === 'gcash' ? 'GCash' : 'Bank transfer'} | ${order.paymentStatus}</p>${order.weddingDetails ? `<p><strong>Wedding details:</strong> ${order.weddingDetails.coupleNames} | ${order.weddingDetails.weddingDate} | ${order.weddingDetails.venue}<br>${order.weddingDetails.content}</p>` : '<p>Wedding details not submitted yet.</p>'}<small>${new Date(order.createdAt).toLocaleString()}</small></article>`).join('');
+    });
+  </script>
+</body>
+</html>

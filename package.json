@@ -1,0 +1,12 @@
+{
+  "name": "khyxx-digitals-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Khyxx Digitals store checkout backend",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^7.0.6"
+  }
+}
